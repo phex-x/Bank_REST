@@ -40,10 +40,13 @@ public class UserService {
         log.info("Deleted user: {}", id);
     }
 
-    public void changeRole(Long userId, Role role) {
+    public UserResponseDTO changeRole(Long userId, Role role) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("user with id + " + userId + " not found"));
         user.setRole(role);
-        log.info("Changed user role: {}", user);
+        User savedUser = userRepository.save(user);
+        log.info("Changed user role: {}", savedUser);
+
+        return userMapper.toDTO(savedUser);
     }
 }
