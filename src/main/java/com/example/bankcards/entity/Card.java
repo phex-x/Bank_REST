@@ -35,11 +35,22 @@ public class Card {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
-    public String getMaskedCardNumber() {
-        if (maskedCardNumber != null && maskedCardNumber.length() > 4) {
-            String nums = maskedCardNumber.substring(maskedCardNumber.length() - 4);
-            return "**** **** **** " + nums;
+    @PrePersist
+    public void prePersist() {
+        if (this.balance == null) {
+            this.balance = BigDecimal.ZERO;
         }
-        return maskedCardNumber;
+
+        if (this.encryptedCardNumber == null && this.encryptedCardNumber.length() > 4) {
+            this.maskedCardNumber = "**** **** **** " + this.encryptedCardNumber.substring(this.encryptedCardNumber.length() - 4);
+        } else throw new IllegalArgumentException("invalid card number");
+
+        if (this.owner == null) {
+            throw new IllegalArgumentException("card owner must be set");
+        }
+
+        if (this.status == null) {
+            this.status = CardStatus.ACTIVE;
+        }
     }
 }

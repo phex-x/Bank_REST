@@ -15,7 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "password")
@@ -27,4 +27,11 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "owner")
     List<Card> cards = new ArrayList<>();
+
+    @PrePersist
+    protected void PrePersist() {
+        if (this.role == null) {
+            this.role = Role.USER;
+        }
+    }
 }
