@@ -15,11 +15,11 @@ public class Transfer {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "source_card_id", nullable = false)
+    @JoinColumn(name = "source_card", nullable = false)
     private Card sourceCard;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "destination_card_id", nullable = false)
+    @JoinColumn(name = "destination_card", nullable = false)
     private Card destinationCard;
 
     @Column(nullable = false, precision = 19, scale = 2)
@@ -27,4 +27,9 @@ public class Transfer {
 
     @Column(nullable = false)
     private LocalDateTime timestamp = LocalDateTime.now();
+
+    @PrePersist
+    protected void prePersist() {
+        this.timestamp = LocalDateTime.now();
+    }
 }

@@ -41,7 +41,7 @@ public class Card {
             this.balance = BigDecimal.ZERO;
         }
 
-        if (this.encryptedCardNumber == null && this.encryptedCardNumber.length() > 4) {
+        if (this.encryptedCardNumber != null && this.encryptedCardNumber.length() > 4) {
             this.maskedCardNumber = "**** **** **** " + this.encryptedCardNumber.substring(this.encryptedCardNumber.length() - 4);
         } else throw new IllegalArgumentException("invalid card number");
 

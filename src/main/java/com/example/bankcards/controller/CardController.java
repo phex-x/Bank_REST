@@ -7,32 +7,32 @@ import com.example.bankcards.service.CardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/card")
 @RequiredArgsConstructor
 public class CardController {
     private final CardService cardService;
 
-    @PostMapping("/card/create")
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public CardResponseDTO createCard(@RequestBody @Valid CardCreateDTO cardCreateDTO) {
         return cardService.createCard(cardCreateDTO);
     }
 
-    @GetMapping("/card/{id}")
+    @GetMapping("/{id}")
     public CardResponseDTO getCard(@PathVariable Long id) {
         return cardService.getCardById(id);
     }
 
-    @DeleteMapping("/card/{id}")
-    public ResponseEntity<String> deleteCard(@PathVariable Long id) {
+    @DeleteMapping("/{id}/delete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCard(@PathVariable Long id) {
         cardService.deleteCard(id);
-        return ResponseEntity.ok("card deleted successfully");
     }
 
-    @PatchMapping("/card/{id}")
+    @PatchMapping("/{id}/status")
     public CardResponseDTO updateStatus(@PathVariable Long id, @RequestBody @Valid CardStatus status) {
         return cardService.changeStatus(id, status);
     }
