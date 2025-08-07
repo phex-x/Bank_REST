@@ -9,6 +9,9 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.util.mapper.CardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,5 +52,14 @@ public class CardService {
         log.info("Card updated: {}", savedCard);
 
         return cardMapper.toDTO(savedCard);
+    }
+
+    public Page<CardResponseDTO> getMyCards(Pageable pageable) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return cardRepository.findAllByOwnerUsername(username, pageable).map(cardMapper::toDTO);
+    }
+
+    public Page<CardResponseDTO> getAllCards(Pageable pageable) {
+        return cardRepository.findAll(pageable).map(cardMapper::toDTO);
     }
 }

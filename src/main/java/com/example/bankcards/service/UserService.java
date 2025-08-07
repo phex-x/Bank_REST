@@ -9,6 +9,11 @@ import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +27,6 @@ public class UserService {
         User user = userMapper.toEntity(userCreateDTO);
         user = userRepository.save(user);
         log.info("Created user: {}", user);
-
         return userMapper.toDTO(user);
     }
 
@@ -31,6 +35,10 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("user with id + " + id + " not found"));
 
         return userMapper.toDTO(user);
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public void deleteUserById(Long id) {
@@ -48,5 +56,18 @@ public class UserService {
         log.info("Changed user role: {}", savedUser);
 
         return userMapper.toDTO(savedUser);
+    }
+
+    public UserDetailsService userDetailsService() {
+        return this::getUserByUsername;
+    }
+
+    public UserResponseDTO getCurrentUser() {
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userMapper.toDTO(getUserByUsername(username));
+    }
+
+    public Page<UserResponseDTO> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(userMapper::toDTO);
     }
 }

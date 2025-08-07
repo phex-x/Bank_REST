@@ -12,6 +12,9 @@ import com.example.bankcards.repository.TransferRepository;
 import com.example.bankcards.util.mapper.TransferMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,5 +43,14 @@ public class TransferService {
         log.info("Transfer created");
 
         return transferMapper.toDTO(transfer);
+    }
+
+    public Page<TransferResponseDTO> getMyTransfers(Pageable pageable) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return transferRepository.findAllBySourceCardOwnerUsername(username, pageable).map(transferMapper::toDTO);
+    }
+
+    public Page<TransferResponseDTO> getAllTransfers(Pageable pageable) {
+        return transferRepository.findAll(pageable).map(transferMapper::toDTO);
     }
 }

@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/card")
@@ -35,5 +38,17 @@ public class CardController {
     @PatchMapping("/{id}/status")
     public CardResponseDTO updateStatus(@PathVariable Long id, @RequestBody @Valid CardStatus status) {
         return cardService.changeStatus(id, status);
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('USER')")
+    public Page<CardResponseDTO> getMyCards(Pageable pageable) {
+        return cardService.getMyCards(pageable);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<CardResponseDTO> getAllCards(Pageable pageable) {
+        return cardService.getAllCards(pageable);
     }
 }
