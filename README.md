@@ -1,100 +1,110 @@
-<h1>🚀 Разработка Системы Управления Банковскими Картами</h1>
+# 🚀 Система управления банковскими картами (Bank_REST)
 
-<h2>📁 Стартовая структура</h2>
-  <p>
-    Проектная структура с директориями и описательными файлами (<code>README Controller.md</code>, <code>README Service.md</code> и т.д.) уже подготовлена.<br />
-    Все реализации нужно добавлять <strong>в соответствующие директории</strong>.
-  </p>
-  <p>
-    После завершения разработки <strong>временные README-файлы нужно удалить</strong>, чтобы они не попадали в итоговую сборку.
-  </p>
-  
-<h2>📝 Описание задачи</h2>
-  <p>Разработать backend-приложение на Java (Spring Boot) для управления банковскими картами:</p>
-  <ul>
-    <li>Создание и управление картами</li>
-    <li>Просмотр карт</li>
-    <li>Переводы между своими картами</li>
-  </ul>
+## 📦 Описание
+Backend-приложение на Java (Spring Boot) для управления банковскими картами с поддержкой ролей, JWT, шифрованием, Liquibase, Docker и OpenAPI.
 
-<h2>💳 Атрибуты карты</h2>
-  <ul>
-    <li>Номер карты (зашифрован, отображается маской: <code>**** **** **** 1234</code>)</li>
-    <li>Владелец</li>
-    <li>Срок действия</li>
-    <li>Статус: Активна, Заблокирована, Истек срок</li>
-    <li>Баланс</li>
-  </ul>
+## 🏁 Быстрый старт
 
-<h2>🧾 Требования</h2>
+### 1. Клонирование и сборка
+```bash
+git clone https://github.com/PaatoM/Bank_REST.git
+cd Bank_REST
+mvn clean package
+```
 
-<h3>✅ Аутентификация и авторизация</h3>
-  <ul>
-    <li>Spring Security + JWT</li>
-    <li>Роли: <code>ADMIN</code> и <code>USER</code></li>
-  </ul>
+### 2. Запуск через Docker Compose
+```bash
+docker-compose up --build
+```
+- Приложение: http://localhost:8080
+- БД PostgreSQL: localhost:5432 (user: `bankuser`, pass: `bankpass`, db: `bankdb`)
 
-<h3>✅ Возможности</h3>
-<strong>Администратор:</strong>
-  <ul>
-    <li>Создаёт, блокирует, активирует, удаляет карты</li>
-    <li>Управляет пользователями</li>
-    <li>Видит все карты</li>
-  </ul>
+### 3. Миграции
+Миграции Liquibase применяются автоматически при запуске.
 
-<strong>Пользователь:</strong>
-  <ul>
-    <li>Просматривает свои карты (поиск + пагинация)</li>
-    <li>Запрашивает блокировку карты</li>
-    <li>Делает переводы между своими картами</li>
-    <li>Смотрит баланс</li>
-  </ul>
+### 4. Документация API
+Swagger UI будет доступен по адресу: http://localhost:8080/swagger-ui.html (если springdoc подключён)
 
-<h3>✅ API</h3>
-  <ul>
-    <li>CRUD для карт</li>
-    <li>Переводы между своими картами</li>
-    <li>Фильтрация и постраничная выдача</li>
-    <li>Валидация и сообщения об ошибках</li>
-  </ul>
+## 🛡️ Аутентификация и роли
+- JWT-токен обязателен для всех защищённых эндпоинтов.
+- Роли: `ADMIN`, `USER`.
+- Регистрация: `/auth/sign-up` (POST, JSON)
+- Вход: `/auth/sign-in` (POST, JSON)
 
-<h3>✅ Безопасность</h3>
-  <ul>
-    <li>Шифрование данных</li>
-    <li>Ролевой доступ</li>
-    <li>Маскирование номеров карт</li>
-  </ul>
+## 📚 Основные эндпоинты
 
-<h3>✅ Работа с БД</h3>
-  <ul>
-    <li>PostgreSQL или MySQL</li>
-    <li>Миграции через Liquibase (<code>src/main/resources/db/migration</code>)</li>
-  </ul>
+### Пользователь
+- `POST /auth/sign-up` — регистрация
+- `POST /auth/sign-in` — вход (получение JWT)
+- `GET /user/me` — текущий пользователь
+- `GET /user/all` — все пользователи (ADMIN)
+- `PATCH /user/{id}/role` — смена роли (ADMIN)
 
-<h3>✅ Документация</h3>
-  <ul>
-    <li>Swagger UI / OpenAPI — <code>docs/openapi.yaml</code></li>
-    <li><code>README.md</code> с инструкцией запуска</li>
-  </ul>
+### Карты
+- `POST /card/create` — создать карту
+- `GET /card/my` — мои карты (USER, с пагинацией)
+- `GET /card/all` — все карты (ADMIN, с пагинацией)
+- `PATCH /card/{id}/status` — сменить статус карты
+- `DELETE /card/{id}/delete` — удалить карту
 
-<h3>✅ Развёртывание и тестирование</h3>
-  <ul>
-    <li>Docker Compose для dev-среды</li>
-    <li>Liquibase миграции</li>
-    <li>Юнит-тесты ключевой бизнес-логики</li>
-  </ul>
+### Переводы
+- `POST /transfer/transfer` — перевод между своими картами
+- `GET /transfer/my` — мои переводы (USER)
+- `GET /transfer/all` — все переводы (ADMIN)
 
-<h2>📊 Оценка</h2>
-  <ul>
-    <li>Соответствие требованиям</li>
-    <li>Чистота архитектуры и кода</li>
-    <li>Безопасность</li>
-    <li>Обработка ошибок</li>
-    <li>Покрытие тестами</li>
-    <li>ООП и уровни абстракции</li>
-  </ul>
+## 📝 Примеры запросов
 
-<h2>💡 Технологии</h2>
-  <p>
-    Java 17+, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL/MySQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
-  </p>
+### Регистрация пользователя
+```json
+POST /auth/sign-up
+{
+  "username": "user1",
+  "email": "user1@email.com",
+  "password": "password123"
+}
+```
+
+### Вход и получение JWT
+```json
+POST /auth/sign-in
+{
+  "username": "user1",
+  "password": "password123"
+}
+```
+
+### Создание карты
+```json
+POST /card/create
+{
+  "encryptedCardNumber": "1234567890123456",
+  "owner": {"id": 1},
+  "expirationDate": "2026-12-31T23:59:59",
+  "balance": 1000.00
+}
+```
+
+## 🧪 Тесты
+Запуск тестов:
+```bash
+mvn test
+```
+
+## 🗄️ Миграции
+- Liquibase: `src/main/resources/db/migration/changelog-1.0-init.yaml`
+- Применяются автоматически при запуске через Spring Boot или Docker Compose.
+
+## 🐳 Docker
+- `docker-compose.yml` содержит сервисы для приложения и PostgreSQL.
+- Для локального запуска достаточно Docker и Maven.
+
+## 🛠️ Технологии
+- Java 17+, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
+
+---
+
+**Временные README-файлы удалены.**
+
+---
+
+Для подробной OpenAPI-спецификации см. файл `docs/openapi.yaml` (заполнить по необходимости).
