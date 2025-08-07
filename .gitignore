@@ -1,0 +1,63 @@
+### Project-specific ignores ###
+# Временные README (по условию задания)
+README_*.md
+README_Resources.md
+README_Bank_test.md
+
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+/target/
+build/
+out/
+
+### IDE ###
+.idea/
+*.iml
+*.ipr
+*.iws
+.nbattrs
+.nb-gradle/
+
+### Database ###
+*.db
+*.h2.db
+/db/
+hs_err_pid*
+
+### Environment ###
+application-dev.yml
+application-prod.yml
+.env
+.secrets/
+/config/
+
+### Logs ###
+*.log
+logs/
+*.log.*
+/log/
+
+### Docker ###
+docker-compose.override.yml
+/docker-data/
+
+### System ###
+.DS_Store
+Thumbs.db
+
+### Maven ###
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+### Liquibase ###
+/liquibase.properties
