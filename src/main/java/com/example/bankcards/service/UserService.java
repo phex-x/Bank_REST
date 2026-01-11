@@ -3,6 +3,7 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.LoginRequest;
 import com.example.bankcards.dto.RegistrationRequest;
 import com.example.bankcards.dto.UserResponse;
+import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.UserMapper;
@@ -35,5 +36,39 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("user with email" + email + " not found"));
 
         return user;
+    }
+
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
+
+        return userMapper.toUserResponse(user);
+    }
+
+    public void disableUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
+        user.setIsEnabled(false);
+        userRepository.save(user);
+    }
+
+    public void enableUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
+        user.setIsEnabled(true);
+        userRepository.save(user);
+    }
+
+    public void changeRole(Long userId, Role role) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + userId + " not found"));
+        user.setRole(role);
+        userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("user with id " + id + " not found"));
+        userRepository.delete(user);
     }
 }
