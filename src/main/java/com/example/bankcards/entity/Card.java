@@ -20,13 +20,13 @@ public class Card {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private Status status = Status.ACTIVE;
 
     @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
     @Column(name = "balance", nullable = false)
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
