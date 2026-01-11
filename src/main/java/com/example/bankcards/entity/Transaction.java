@@ -3,7 +3,7 @@ package com.example.bankcards.entity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transactions")
@@ -27,8 +27,8 @@ public class Transaction {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp;
 
     //getters
     public Long getId() { return id; }
@@ -36,7 +36,7 @@ public class Transaction {
     public Card getCardFrom() { return cardFrom; }
     public Card getCardTo() { return cardTo; }
     public BigDecimal getAmount() { return amount; }
-    public LocalDate getDate() { return date; }
+    public LocalDateTime getDate() { return timestamp; }
 
     //setters
     public void setId(Long id) { this.id = id; }
@@ -44,5 +44,5 @@ public class Transaction {
     public void setCardFrom(Card cardFrom) { this.cardFrom = cardFrom; }
     public void setCardTo(Card cardTo) { this.cardTo = cardTo; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
-    public void setDate(LocalDate date) { this.date = date; }
+    public void setDateTime(LocalDateTime timestamp) { this.timestamp = timestamp; }
 }
