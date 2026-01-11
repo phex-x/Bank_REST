@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,15 +34,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
-
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id")
-    )
     @Column(name = "role")
-    private Set<Role> roles;
+    private Role role;
 
     @Column(name = "is_account_non_expired", nullable = false)
     private Boolean isAccountNonExpired;
@@ -58,9 +53,16 @@ public class User implements UserDetails {
     //user details impl
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(Collectors.toSet());
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        switch (role) {
+            case ADMIN:
+                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                break;
+            case USER:
+                authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        return authorities;
     }
 
     @Override
@@ -92,7 +94,7 @@ public class User implements UserDetails {
     public String getHashedPassword() { return hashedPassword; }
     public List<Card> getCards() { return cards; }
     public List<Transaction> getTransactions() { return transactions; }
-    public Set<Role> getRoles() { return roles; }
+    public Role getRole() { return role; }
     public Boolean getIsAccountNonExpired() { return isAccountNonExpired; }
     public Boolean getIsAccountNonLocked() { return isAccountNonLocked; }
     public Boolean getIsCredentialsNonExpired() { return isCredentialsNonExpired; }
@@ -104,5 +106,6 @@ public class User implements UserDetails {
     public void setHashedPassword(String hashedPassword) { this.hashedPassword = hashedPassword; }
     public void setCards(List<Card> cards) { this.cards = cards; }
     public void setTransactions(List<Transaction> transactions) { this.transactions = transactions; }
-    public void setRoles(Set<Role> roles) { this.roles = roles; }
+    public void setRole(Role role) { this.role = role; }
+    public void setIsEnabled(Boolean isEnabled) { this.isEnabled = isEnabled; }
 }
