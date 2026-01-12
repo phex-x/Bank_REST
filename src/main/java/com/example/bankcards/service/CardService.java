@@ -6,6 +6,8 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.Status;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.util.CardMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
@@ -52,5 +54,11 @@ public class CardService {
         cardRepository.save(card);
 
         return cardMapper.toCardResponse(card);
+    }
+
+    public Page<CardResponse> getAllCards(Pageable pageable) {
+        Page<Card> cards = cardRepository.findAll(pageable);
+
+        return cards.map(cardMapper::toCardResponse);
     }
 }
