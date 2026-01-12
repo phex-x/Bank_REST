@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class CardService {
     private final CardRepository cardRepository;
@@ -60,5 +62,33 @@ public class CardService {
         Page<Card> cards = cardRepository.findAll(pageable);
 
         return cards.map(cardMapper::toCardResponse);
+    }
+
+    public Page<CardResponse> getAllUserCards(Long id, Pageable pageable) {
+        Page<Card> cards = cardRepository.findAllByUserId(id, pageable);
+
+        return cards.map(cardMapper::toCardResponse);
+    }
+
+    public CardResponse findByMaskedCardNumber(Long userId, String maskedCardNumber) {
+        Card card = cardRepository.findByMaskedCardNumber(maskedCardNumber)
+                .orElseThrow(() -> new BadCredentialsException("Card not found"));
+
+        if (!card.getUser().getId().equals(userId)) {
+            throw new BadCredentialsException("You don't have rights to this card");
+        }
+
+        return cardMapper.toCardResponse(card);
+    }
+
+    public BigDecimal getBalance(Long cardId, Long userId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new BadCredentialsException("Card not found"));
+
+        if (!card.getUser().getId().equals(userId)) {
+            throw new BadCredentialsException("You don't have rights to this card");
+        }
+
+        return card.getBalance();
     }
 }
