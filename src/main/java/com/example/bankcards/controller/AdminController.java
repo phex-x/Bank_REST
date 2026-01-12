@@ -87,4 +87,11 @@ public class AdminController {
     public ResponseEntity<Page<CardResponse>> getAllCards(Pageable pageable) {
         return ResponseEntity.ok(cardService.getAllCards(pageable));
     }
+
+    @DeleteMapping("/card/delete/{id}")
+    public ResponseEntity<?> deleteCard(@PathVariable Long id) {
+        cardService.deleteCard(id);
+
+        return ResponseEntity.ok().build();
+    }
 }
