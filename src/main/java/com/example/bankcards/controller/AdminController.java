@@ -1,6 +1,9 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.*;
+import com.example.bankcards.entity.BlockRequestStatus;
+import com.example.bankcards.entity.User;
+import com.example.bankcards.service.BlockService;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.UserService;
 import jakarta.validation.Valid;
@@ -9,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,10 +21,12 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final UserService userService;
     private final CardService cardService;
+    private final BlockService blockService;
 
-    public AdminController(UserService userService, CardService cardService) {
+    public AdminController(UserService userService, CardService cardService, BlockService blockService) {
         this.userService = userService;
         this.cardService = cardService;
+        this.blockService = blockService;
     }
 
     @GetMapping("/user/{id}")
@@ -93,5 +100,29 @@ public class AdminController {
         cardService.deleteCard(id);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/to-block/get-all")
+    public ResponseEntity<Page<BlockResponseBeforeResult>> getAllRequests(Pageable pageable) {
+        return ResponseEntity.ok(blockService.getAllRequests(pageable));
+    }
+
+    @GetMapping("/to-block/{id}")
+    public ResponseEntity<BlockResponseBeforeResult> getRequest(@PathVariable Long id) {
+        return ResponseEntity.ok(blockService.getRequestById(id));
+    }
+
+    @PostMapping("/to-block/result")
+    public ResponseEntity<BlockResponseAfterResult> acceptBlock(@Valid @RequestBody AdminBlockRequest adminBlockRequest) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        assert auth != null;
+        User admin = (User) auth.getPrincipal();
+        assert admin != null;
+
+        if (adminBlockRequest.getStatus().equals(BlockRequestStatus.APPROVED)) {
+            return ResponseEntity.ok(blockService.acceptBlock(admin.getId(), adminBlockRequest.getRequestId(), adminBlockRequest.getComment()));
+        } else {
+            return ResponseEntity.ok(blockService.rejectBlock(admin.getId(), adminBlockRequest.getRequestId(), adminBlockRequest.getComment()));
+        }
     }
 }
