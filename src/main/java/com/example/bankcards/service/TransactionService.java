@@ -3,7 +3,9 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.TransactionRequest;
 import com.example.bankcards.dto.TransactionResponse;
 import com.example.bankcards.entity.Card;
+import com.example.bankcards.entity.Status;
 import com.example.bankcards.entity.Transaction;
+import com.example.bankcards.exception.InActiveCardException;
 import com.example.bankcards.exception.InsufficientFundsException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.TransactionRepository;
@@ -31,6 +33,8 @@ public class TransactionService {
 
         if (!cardFrom.getUser().getId().equals(userId)) {
             throw new BadCredentialsException("You don't have rights to this card");
+        } else if (!cardFrom.getStatus().equals(Status.ACTIVE)) {
+            throw new InActiveCardException("inactive card");
         }
 
         Card cardTo = cardRepository.findById(transactionRequest.getCardToId())
@@ -38,6 +42,8 @@ public class TransactionService {
 
         if (!cardTo.getUser().getId().equals(userId)) {
             throw new BadCredentialsException("You don't have rights to this card");
+        } else if (!cardTo.getStatus().equals(Status.ACTIVE)) {
+            throw new InActiveCardException("inactive card");
         }
 
         if (cardFrom.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
