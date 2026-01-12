@@ -1,10 +1,8 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.CardFindByNumberRequest;
-import com.example.bankcards.dto.CardResponse;
-import com.example.bankcards.dto.TransactionRequest;
-import com.example.bankcards.dto.TransactionResponse;
+import com.example.bankcards.dto.*;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.service.BlockService;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.TransactionService;
 import jakarta.validation.Valid;
@@ -22,10 +20,12 @@ import java.math.BigDecimal;
 public class UserController {
     private final CardService cardService;
     private final TransactionService transactionService;
+    private final BlockService blockService;
 
-    public UserController(CardService cardService, TransactionService transactionService) {
+    public UserController(CardService cardService, TransactionService transactionService, BlockService blockService) {
         this.cardService = cardService;
         this.transactionService = transactionService;
+        this.blockService = blockService;
     }
 
     @GetMapping("/card/get-all")
@@ -71,4 +71,13 @@ public class UserController {
         return ResponseEntity.ok(transactionService.transfer(user.getId(), request));
     }
 
+    @PostMapping("/request-block/{id}")
+    public ResponseEntity<BlockResponseBeforeResult> requestBlock(@PathVariable Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        assert auth != null;
+        User user = (User) auth.getPrincipal();
+        assert user != null;
+
+        return ResponseEntity.ok(blockService.requestBlock(user.getId(), id));
+    }
 }
