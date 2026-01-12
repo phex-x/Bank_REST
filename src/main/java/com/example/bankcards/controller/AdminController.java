@@ -1,8 +1,9 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.UserChangeRoleRequest;
-import com.example.bankcards.dto.UserResponse;
+import com.example.bankcards.dto.*;
+import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin")
 public class AdminController {
     private final UserService userService;
+    private final CardService cardService;
 
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, CardService cardService) {
         this.userService = userService;
+        this.cardService = cardService;
     }
 
     @GetMapping("/user/{id}")
@@ -64,5 +67,24 @@ public class AdminController {
         userService.deleteUser(id);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/card/create")
+    public ResponseEntity<CardResponse> createCard(@Valid @RequestBody CardCrateRequest cardCrateRequest) {
+
+        return ResponseEntity.ok(cardService.createCard(cardCrateRequest));
+    }
+
+    @PatchMapping("/card/change-status")
+    public ResponseEntity<CardResponse> activateCard(@Valid @RequestBody CardChangeStatusRequest cardChangeStatusRequest) {
+        return ResponseEntity.ok(
+                cardService.changeStatus(cardChangeStatusRequest.getId(),
+                        cardChangeStatusRequest.getStatus()))
+                ;
+    }
+
+    @GetMapping("/card/get-all")
+    public ResponseEntity<Page<CardResponse>> getAllCards(Pageable pageable) {
+        return ResponseEntity.ok(cardService.getAllCards(pageable));
     }
 }
