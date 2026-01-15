@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: 001-create-user-table.yaml
+  - include:
+      file: 002-create-card-table.yaml
+  - include:
+      file: 003-create-transaction-table.yaml
+  - include:
+     file: 004-create-to-block-table.yaml
