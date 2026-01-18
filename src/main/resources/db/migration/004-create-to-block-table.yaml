@@ -4,63 +4,66 @@ databaseChangeLog:
       author: dmtriiserov
       changes:
         - createTable:
-          tableName: to_block
-          columns:
-            - column:
-              name: id
-              type: BIGINT
-              autoIncrement: true
-              constraints:
-                primaryKey: true
-                nullable: false
-            - column:
-                name: user_id
-                type: BIGINT
-                constraints:
-                  nullable: false
-            - column:
-                name: card_id
-                type: BIGINT
-                constraints:
-                  nullable: false
-            - column:
-                name: status
-                type: VARCHAR(20)
-                constraints:
-                  nullable: false
-            - column:
-                name: request_date_time
-                type: timestamp
-                constraints:
-                  nullable: false
-            - column:
-                name: processed_date_time
-                type: timestamp
-                constraints:
-                  nullable: false
-            - column:
-                name: admin_id
-                type: BIGINT
-                constraints:
-                  nullable: false
-            - column:
-                name: admin_comment
-                type: VARCHAR(255)
-            - addForeignKeyConstraint:
-                baseTableName: to_block
-                baseColumnNames: user_id
-                referencedTableName: users
-                referencedColumnNames: id
-                constraintName: fk_to_block_user
-            - addForeignKeyConstraint:
-                baseTableName: to_block
-                baseColumnNames: card_id
-                referencedTableName: cards
-                referencedColumnNames: id
-                constraintName: fk_to_block_card
-            - addForeignKeyConstraint:
-                baseTableName: to_block
-                baseColumnNames: admin_id
-                referencedTableName: users
-                referencedColumnNames: id
-                constraintName: fk_to_block_user_admin
+            tableName: to_block
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: request_date_time
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: processed_date_time
+                  type: timestamp
+                  constraints:
+                    nullable: true
+              - column:
+                  name: admin_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: admin_comment
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+        - addForeignKeyConstraint:
+            baseTableName: to_block
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_to_block_user
+        - addForeignKeyConstraint:
+            baseTableName: to_block
+            baseColumnNames: card_id
+            referencedTableName: cards
+            referencedColumnNames: id
+            constraintName: fk_to_block_card
+        - addForeignKeyConstraint:
+            baseTableName: to_block
+            baseColumnNames: admin_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_to_block_admin

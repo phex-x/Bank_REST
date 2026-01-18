@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 001
+      id: 001-create-user-table
       author: dmitriiserov
       changes:
         - createTable:
@@ -14,13 +14,13 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                 name: name
-                 type: VARCHAR(50)
-                 constraints:
-                   nullable: false
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
               - column:
                   name: email
-                  type: VARCHAR(50)
+                  type: VARCHAR(100)
                   constraints:
                     nullable: false
                     unique: true
@@ -36,25 +36,25 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: is_account_non_expired
-                  type: bool
+                  type: BOOLEAN
                   defaultValue: true
                   constraints:
                     nullable: false
               - column:
                   name: is_account_non_locked
-                  type: bool
+                  type: BOOLEAN
                   defaultValue: true
                   constraints:
                     nullable: false
               - column:
                   name: is_credentials_non_expired
-                  type: bool
+                  type: BOOLEAN
                   defaultValue: true
                   constraints:
                     nullable: false
               - column:
                   name: is_enabled
-                  type: bool
+                  type: BOOLEAN
                   defaultValue: true
                   constraints:
-                    nullable: true
+                    nullable: false

@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 003
+      id: 003-create-transaction-table
       author: dmitriiserov
       changes:
         - createTable:
@@ -30,20 +30,21 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: amount
-                  type: DECIMAL(19,2)
+                  type: DECIMAL(19, 2)
                   constraints:
                     nullable: false
               - column:
                   name: timestamp
                   type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
-           baseTableName: transactions
-           baseColumnNames: user_id
-           referencedTableName: users
-           referencedColumnNames: id
-           constraintName: fk_transactions_user
+            baseTableName: transactions
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_transactions_user
         - addForeignKeyConstraint:
             baseTableName: transactions
             baseColumnNames: source_card_id
