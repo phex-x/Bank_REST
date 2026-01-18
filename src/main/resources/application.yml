@@ -28,5 +28,7 @@ spring:
     database-change-log-table: DATABASECHANGELOG
     database-change-log-lock-table: DATABASECHANGELOGLOCK
 
-
-
+springdoc:
+  swagger-ui:
+    url: /docs/openapi.yaml
+    path: /swagger-ui.html
