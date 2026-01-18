@@ -108,4 +108,5 @@ public class User implements UserDetails {
     public void setTransactions(List<Transaction> transactions) { this.transactions = transactions; }
     public void setRole(Role role) { this.role = role; }
     public void setIsEnabled(Boolean isEnabled) { this.isEnabled = isEnabled; }
+    public void setId(Long id) { this.id = id; }
 }

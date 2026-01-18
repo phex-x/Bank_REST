@@ -9,4 +9,9 @@ public class UserChangeRoleRequest {
     //getters
     public Long getId() { return id; }
     public Role getRole() { return role; }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public void setRole(Role role) {this.role = role; }
 }
