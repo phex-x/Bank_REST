@@ -1,1 +1,362 @@
-# Здесь будет OpenAPI описание всех доступных эндпоинтов и моделей данных.
+openapi: 3.0.3
+
+info:
+  title: Bank REST API
+  description: |
+    REST API for bank system.
+    Supports authentication, users, cards, transactions and card blocking.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+tags:
+  - name: Auth
+    description: Authentication
+  - name: Users
+    description: Users management
+  - name: Cards
+    description: Bank cards
+  - name: Transactions
+    description: Money transactions
+  - name: Blocks
+    description: Card blocking
+
+paths:
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: User registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User created
+        '400':
+          description: Validation error
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Get all users
+      responses:
+        '200':
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Get user by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+
+    delete:
+      tags: [Users]
+      summary: Delete user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          description: User not found
+
+  /cards:
+    get:
+      tags: [Cards]
+      summary: Get all cards of authenticated user
+      responses:
+        '200':
+          description: Cards list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Card'
+
+    post:
+      tags: [Cards]
+      summary: Create new card
+      responses:
+        '201':
+          description: Card created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+
+  /cards/{id}:
+    get:
+      tags: [Cards]
+      summary: Get card by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Card found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '404':
+          description: Card not found
+
+  /cards/{id}/balance:
+    put:
+      tags: [Cards]
+      summary: Change card balance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BalanceRequest'
+      responses:
+        '200':
+          description: Balance updated
+        '400':
+          description: Invalid amount
+
+  /transactions:
+    get:
+      tags: [Transactions]
+      summary: Get all transactions
+      responses:
+        '200':
+          description: Transactions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
+    post:
+      tags: [Transactions]
+      summary: Create transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+      responses:
+        '200':
+          description: Transaction completed
+        '400':
+          description: Transaction error
+
+  /blocks:
+    get:
+      tags: [Blocks]
+      summary: Get all blocked cards
+      responses:
+        '200':
+          description: Blocked cards list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Block'
+
+    post:
+      tags: [Blocks]
+      summary: Block card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlockRequest'
+      responses:
+        '201':
+          description: Card blocked
+
+  /blocks/{id}:
+    delete:
+      tags: [Blocks]
+      summary: Unblock card
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Card unblocked
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          example: user@mail.com
+        password:
+          type: string
+          example: password123
+
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9...
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        role:
+          type: string
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+        number:
+          type: string
+        balance:
+          type: number
+        blocked:
+          type: boolean
+
+    BalanceRequest:
+      type: object
+      required: [amount]
+      properties:
+        amount:
+          type: number
+          example: 1000
+
+    TransactionRequest:
+      type: object
+      required: [fromCardId, toCardId, amount]
+      properties:
+        fromCardId:
+          type: integer
+        toCardId:
+          type: integer
+        amount:
+          type: number
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        fromCardId:
+          type: integer
+        toCardId:
+          type: integer
+        amount:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    BlockRequest:
+      type: object
+      required: [cardId]
+      properties:
+        cardId:
+          type: integer
+
+    Block:
+      type: object
+      properties:
+        id:
+          type: integer
+        cardId:
+          type: integer
+        blockedAt:
+          type: string
+          format: date-time
+
+security:
+  - bearerAuth: []
